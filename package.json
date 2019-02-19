@@ -9,8 +9,14 @@
     "cheerio": "^1.0.0-rc.2",
     "xml-writer": "^1.7.0"
   },
+  "devDependencies": {
+    "mocha": "6.0.0",
+    "sinon": "7.2.4",
+    "chai": "4.2.0"
+  },
   "scripts": {
-    "test": "test"
+    "test": "mocha test",
+    "crawl": "node src/crawler.js"
   },
   "repository": {
     "type": "git",
