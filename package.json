@@ -1,0 +1,24 @@
+{
+  "name": "crawler",
+  "version": "1.0.0",
+  "description": "Simple Web Crawler",
+  "main": "crawler.js",
+  "dependencies": {
+    "async": "^2.6.2",
+    "axios": "^0.18.0",
+    "cheerio": "^1.0.0-rc.2"
+  },
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jrorrison/crawler.git"
+  },
+  "author": "James Rorrison",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jrorrison/crawler/issues"
+  },
+  "homepage": "https://github.com/jrorrison/crawler#readme"
+}
