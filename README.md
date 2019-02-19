@@ -1,30 +1,82 @@
-# crawler
+# Crawler
+
+A simple web crawler written in JavaScript (Node.js) 
+
+The crawler will visit all pages within a given domain and compile a list of links 
+External pages will not be visited but will be logged in the output.
+
+The crawler will generate a basic xml file with links to internal, external and image resources that were found.
+
+## Install and run
+
+Node version 8.11.1 or greater is required 
+
+$ npm install
+
+To run the crawler:
+
+$ npm run crawl
+
+This will generate a `links.xml` file in the same folder.
+
+To run tests:
+
+$ npm run test
 
 
+## Changing the configuration
 
-### Basic process
-
-* Add base url to queue
-* Download page and extract links
-* partition links in to to internal, external, image
-* Add each link to known urls map
-* for each internal link
-  * check if we can visit (not visited, strip url hash etc)
-  * add url to queue
+To change the starting domain and output file update the variables at the top of `crawler.js`
 
 
+## Design
 
-### Notes & things to consider
-  * Types of relative url "/resource/page.html" vs "resource/page.html" 
-  * Types of urls (https, http, //)
-  * error handing (types of error)
-  * rediects 
-  * Query strings, url hashes
-  * Log urls with hashes but strip before we queue
-  * Are there certain qs params we can ignore e.g. utm?
-  * throttling
-  * Max crawls to prevent never ending loops due to bugs
-  * Command line handling
-  * robots.txt files
-  * scaling (task queues, lambdas / Azure functions)
-  * resilence (can we recover if we crash?)
+The code is structured in the following way:
+
+The main crawler (`crawler.js`) who is responsible for:
+* Initiating the crawl
+* Management of the crawl queue
+* Determining if a link should be crawled
+* Collation of results
+* Output of results to file when the crawl is complete
+
+The 2nd part of the code is a simple page processing worker (`utis.js`) which does the following:
+
+* Accepts a url to process
+* Downloads the page
+* Extracts all links from the page
+* Partitions the links in to external, internal and resouces lists
+* Returns these lists back to the main crawler
+
+The reason for this split was to enable a single crawler to manage the processing of a domain and collation of results, while taking advantage of a pool of page processing workers to do the actual work.
+
+We can adjust how many concurrent tasks we have to take advantage of the fact that a lot of the time is spent in IO bound operations.
+
+This also has the advantages that later, if required, we could move to multi threaded or even distrubuted task processing.
+
+We use the 
+
+## Outstanding / If I had more time
+
+If had more time I would improve on the following
+
+* Ability to specify starting domain and output file via the command line
+* Better handling of starting domain e.g. validate format. handle when starting domain contains a path
+* Better error handling.  At the moment we just log errors and carry on but there is work we can do here. Somethought would be required around HTTP status codes and we to try and re-queue pages
+* Integration tests.  Run the crawler against sample test sites and verify the results
+* Finish unit testing
+* Do more work around the detection of external urls and what is crawlable and whats not
+* Improve the xml output to include crawl dates, url types
+* Respect robots.txt file
+* Set proper request headers
+
+
+## Other talking points
+
+* Peristence of crawl results and the queue
+* Scaling up of page processing tasks
+* Resilience e.g. if we crash how can we pick up where we started?
+* Proper logging of errors
+* Optimistation and use of cache headers eg. if-modified-since
+* How to throttle requests
+* Preventing infinate crawl loops
