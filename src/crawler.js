@@ -1,6 +1,6 @@
 const async = require('async');
 const page = require('./page');
-
+const { URL } = require('url');
 const MAX_CONCURRENT = 2;
 const MAX_CRAWLS = 5000;
 const baseUrl = 'https://www.barvas.com';
@@ -9,7 +9,7 @@ const siteLinks = {
   
 }
 
-const visited = {
+const knownUrls = {
   
 }
 
@@ -23,21 +23,26 @@ function updateSiteLinks(newLinks) {
   }
 }
 
+function cleanUrl(url) {
+  //TODO: Remove  utm url params 
+  const u = new URL(url);
+  u.hash = '';
+  return u.toString();
+}
+
 function queueLinks(links) {
   for (const link of links) {
-    //TODO: Remove hashes and some url params (e.g. utm_)
-    if (!visited[link]) {
-      queue.push(link, processUrlComplete);
+    const cleanLink = cleanUrl(link);
+    if (!knownUrls[cleanLink]) {
+      knownUrls[cleanLink] = true;
+      queue.push(cleanLink, processUrlComplete);
     }
   }
 }
 
 async function processUrl(url) {
-  if (visited[url]) {
-    return false;
-  }
-  visited[url] = true;
   const links = page.getPageLinks(baseUrl, url);
+  knownUrls[links.responseUrl] = true;
   return links;
 }
 
@@ -52,11 +57,12 @@ function processUrlComplete(err, results) {
     results.internal && updateSiteLinks(results.internal);
     queueLinks(results.internal);
   }
+  console.log('processed', results.pageUrl);
 }
 
 function queueDone() {
   //TODO: write output
-  console.log('complete');
+  console.log('complete', siteLinks);
 }
 
 
