@@ -12,17 +12,17 @@ The crawler will generate a basic xml file with links to internal, external and 
 
 Node version 8.11.1 or greater is required 
 
-$ npm install
+`$ npm install`
 
 To run the crawler:
 
-$ npm run crawl
+`$ npm run crawl`
 
 This will generate a `links.xml` file in the same folder.
 
 To run tests:
 
-$ npm run test
+`$ npm run test`
 
 
 ## Changing the configuration
