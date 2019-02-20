@@ -1,9 +1,9 @@
-const axios = require("axios");
-const cheerio = require("cheerio");
-const XMLWriter = require("xml-writer");
-const { URL } = require("url");
+const axios = require('axios');
+const cheerio = require('cheerio');
+const XMLWriter = require('xml-writer');
+const { URL } = require('url');
 
-const externalUrlRegEx = new RegExp("^(?:[a-z]+:)?//", "i");
+const externalUrlRegEx = new RegExp('^(?:[a-z]+:)?//', 'i');
 
 /**
  * Returns true if the url is an external url.
@@ -39,8 +39,8 @@ function relToAbsUrl(url, base) {
  * @param {string} url url to test
  */
 function isCrawlableUrl(url) {
-  // TODO: Exclude other protocals and restricted urls
-  return !url.startsWith("mailto:");
+  // TODO: Exclude other protocals and restricted url types
+  return !url.startsWith('mailto:');
 }
 
 /**
@@ -50,7 +50,7 @@ function isCrawlableUrl(url) {
 function cleanUrl(url) {
   //TODO: Remove  utm url params
   const u = new URL(url);
-  u.hash = "";
+  u.hash = '';
   return u.toString();
 }
 
@@ -62,10 +62,10 @@ function cleanUrl(url) {
 function siteLinksToXml(base, siteLinks) {
   const xml = new XMLWriter();
   xml.startDocument();
-  xml.startElement("root");
-  xml.writeAttribute("base", base);
+  xml.startElement('root');
+  xml.writeAttribute('base', base);
   Object.keys(siteLinks).forEach(link => {
-    xml.startElement("url");
+    xml.startElement('url');
     xml.text(link);
     xml.endElement();
   });
@@ -85,18 +85,18 @@ function processPage(html, base) {
   }
   const $ = cheerio.load(html);
   /*
-      Partition internal, external and image links to separate lists
+      Partition internal, external and image links in to separate lists
     */
-  $("a").each(function(i, a) {
-    const link = $(a).attr("href");
+  $('a').each(function(i, a) {
+    const link = $(a).attr('href');
     if (isExternalUrl(link, base)) {
       result.external.push(link);
     } else {
       result.internal.push(relToAbsUrl(link, base));
     }
   });
-  $("img").each(function(i, img) {
-    const link = $(img).attr("src");
+  $('img').each(function(i, img) {
+    const link = $(img).attr('src');
     if (isExternalUrl(link, base)) {
       result.resources.push(link);
     } else {
@@ -123,9 +123,11 @@ function processPage(html, base) {
  * @return {PageResults}
  */
 async function getPageLinks(base, pageUrl) {
+  
   const res = await axios.get(pageUrl);
-  // If we were redirected the responseUrl will be the final url.
-  // return it so it can be marked as visited
+  
+  // NOTE: If we were redirected the responseUrl will be the final url. 
+  // return it so it can be marked as visited by the crawler
   const pageLinks = processPage(res.data, base);
   return {
     base,
