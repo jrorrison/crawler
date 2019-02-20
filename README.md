@@ -8,6 +8,8 @@ External pages will not be visited but will be logged in the output.
 
 The crawler will generate a basic xml file with links to internal, external and image resources that were found.
 
+Sample output files are included in the project.
+
 ## Install and run
 
 Node version 8.11.1 or greater is required 
