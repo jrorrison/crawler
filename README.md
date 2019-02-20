@@ -2,7 +2,8 @@
 
 A simple web crawler written in JavaScript (Node.js) 
 
-The crawler will visit all pages within a given domain and compile a list of links 
+The crawler will visit all pages within a given domain and compile a list of links. 
+
 External pages will not be visited but will be logged in the output.
 
 The crawler will generate a basic xml file with links to internal, external and image resources that were found.
@@ -40,7 +41,7 @@ The main crawler (`crawler.js`) who is responsible for:
 * Collation of results
 * Output of results to file when the crawl is complete
 
-The 2nd part of the code is a simple page processing worker (`utis.js`) which does the following:
+The 2nd part of the code is a simple page processing worker (in `utils.js`) which does the following:
 
 * Accepts a url to process
 * Downloads the page
@@ -48,13 +49,19 @@ The 2nd part of the code is a simple page processing worker (`utis.js`) which do
 * Partitions the links in to external, internal and resouces lists
 * Returns these lists back to the main crawler
 
-The reason for this split was to enable a single crawler to manage the processing of a domain and collation of results, while taking advantage of a pool of page processing workers to do the actual work.
+The reason for this split was to enable a single crawler to manage the processing of a domain and collation of results, while taking advantage of a pool of page processing workers to do the actual work.  The worker task is independant of the domain being crawled (it just downloads and processes a page) so in the future we could have a pool of workers that can be used by multiple crawlers.
 
 We can adjust how many concurrent tasks we have to take advantage of the fact that a lot of the time is spent in IO bound operations.
 
 This also has the advantages that later, if required, we could move to multi threaded or even distrubuted task processing.
 
-We use the 
+### Libs used
+
+We use the axios library for http requests.  Although is is a bit heavy for what we need it has the advantage of handling redirects for us which simplifies our code.
+
+Cheerio is used to parse the HTML and extract the links.  The library makes it very easy to find and extract links.
+
+We also use the [async](https://github.com/caolan/async) for the task queueing.  This allows us to add a pool of workers without introducing complexity.
 
 ## Outstanding / If I had more time
 
@@ -62,10 +69,10 @@ If had more time I would improve on the following
 
 * Ability to specify starting domain and output file via the command line
 * Better handling of starting domain e.g. validate format. handle when starting domain contains a path
-* Better error handling.  At the moment we just log errors and carry on but there is work we can do here. Somethought would be required around HTTP status codes and we to try and re-queue pages
+* Better error handling.  At the moment we just log errors and carry on but there is work we can do here. Some thought would be required around HTTP status codes and we to try and re-queue pages
 * Integration tests.  Run the crawler against sample test sites and verify the results
-* Finish unit testing
-* Do more work around the detection of external urls and what is crawlable and whats not
+* Finish unit testing.  I wrote some but more can be done.
+* Do more work around the detection of external urls and what is crawlable and whats not.  I'm sure we don't cover all cases.
 * Improve the xml output to include crawl dates, url types
 * Respect robots.txt file
 * Set proper request headers
@@ -77,6 +84,6 @@ If had more time I would improve on the following
 * Scaling up of page processing tasks
 * Resilience e.g. if we crash how can we pick up where we started?
 * Proper logging of errors
-* Optimistation and use of cache headers eg. if-modified-since
+* Optimistation and use of things like cache headers eg. if-modified-since
 * How to throttle requests
-* Preventing infinate crawl loops
+* Reliable prevention of infinate crawl loops
