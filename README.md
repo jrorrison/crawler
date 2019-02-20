@@ -59,6 +59,8 @@ This also has the advantages that later, if required, we could move to multi thr
 
 Url handling seems to be the more tricky part here.  I've implemented code to remove url hashes as they should not change the page content.  We can't totally strip query string params from urls as they are important but we could maintain a list of ones we know don't change page content e.g. utm_
 
+Although we strip url hashes before queueing I did decide to log the original url in the output to give a true reflection of the site links.
+
 Detecting if links are external is also interesting.  At the moment I've went for simply checking if the url contains a protocol and the domain differs from the start one.  There may be other cases we don't handle here e.g. www.google.com (no protocol)
 
 
