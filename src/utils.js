@@ -39,12 +39,12 @@ function relToAbsUrl(url, base) {
  * @param {string} url url to test
  */
 function isCrawlableUrl(url) {
-  // TODO: Exclude other protocals and restricted url types
+  // TODO: Exclude other protocols and restricted url types
   return !url.startsWith('mailto:');
 }
 
 /**
- * Remove parts of that are known not to change the page content e.g. hash
+ * Remove parts of the url that are known not to change the page content e.g. hash
  * @param {string} url to clean
  */
 function cleanUrl(url) {
